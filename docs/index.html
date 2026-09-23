@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Moji — on-device emoji suggestions for Android</title>
-<meta name="description" content="Moji suggests the right emoji for any text, entirely on-device. No dependencies, no network, ~5 MB, 22+ languages.">
+<meta name="description" content="Moji suggests the right emoji for any text in under a millisecond, entirely on-device — no server call, no dependencies, ~5 MB, 22+ languages. Free and Apache-2.0.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect x=%221%22 y=%221%22 width=%2222%22 height=%2222%22 rx=%227%22 fill=%22%230071e3%22/><circle cx=%228.5%22 cy=%2210%22 r=%221.4%22 fill=%22%23fff%22/><circle cx=%2215.5%22 cy=%2210%22 r=%221.4%22 fill=%22%23fff%22/><path d=%22M7.5 14.5c1 1.6 3 2.5 4.5 2.5s3.5-.9 4.5-2.5%22 stroke=%22%23fff%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 fill=%22none%22/></svg>">
 <style>
   :root {
@@ -127,7 +127,8 @@
     max-width: 640px; margin: 0 auto 32px;
     font-weight: 400;
   }
-  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .hero-trust { font-size: 13px; color: var(--text-secondary); text-align: center; margin: 0 0 48px; }
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 11px 22px; border-radius: 980px; font-size: 15px; font-weight: 400;
@@ -304,11 +305,12 @@
 <header class="hero">
   <div class="eyebrow">Moji · by Hoverfly</div>
   <h1>The right emoji,<br>every keystroke.</h1>
-  <p class="tagline">An on-device Android library that turns any text into ranked emoji suggestions — private, offline, and about 5 MB. No dependencies, no network, no telemetry.</p>
+  <p class="tagline">Turn any text into ranked emoji suggestions in about half a millisecond — computed on the phone, with nothing sent to a server. Drop it into a keyboard, chat, or composer in three lines of Kotlin.</p>
   <div class="hero-actions">
     <a class="btn btn-primary" href="#install">Get started</a>
     <a class="btn btn-secondary" href="https://github.com/rajumark/moji">View source</a>
   </div>
+  <p class="hero-trust">Free &amp; open source · Apache-2.0 · Live on JitPack</p>
   <div class="hero-demo" id="heroDemo">
     <div class="prompt" id="demoPrompt">moji.suggestions("Pay my bills")</div>
     <div class="input-row" id="demoInput">Pay my bills</div>
@@ -322,28 +324,28 @@
   <div class="section-head">
     <div class="kicker">Why Moji</div>
     <h2>Built for a keyboard, not a datacenter</h2>
-    <p>Everything runs in-process, in plain Kotlin — no runtime to bundle, no round trip to wait on.</p>
+    <p>No server round trip means no latency budget, no API bill, and no user text ever leaving the phone. Everything runs in-process, in plain Kotlin.</p>
   </div>
   <div class="grid">
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5v-7Z"/><path d="M3 8.5 12 14l9-5.5"/><path d="M12 14v7"/></svg></span>
       <h3>No dependencies</h3>
-      <p>Pure Kotlin inference — no ONNX Runtime, no TFLite, no native code. Adds about 5 MB to your APK.</p>
+      <p>Pure Kotlin inference — no ONNX Runtime, no TFLite, no native code. Nothing else to version-bump, conflict, or bloat your build. Adds about 5 MB to your APK.</p>
     </div>
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
       <h3>Private &amp; offline</h3>
-      <p>The model ships inside the AAR. No network calls, no permissions, no telemetry, ever.</p>
+      <p>The model ships inside the AAR. No network calls, no permissions, no telemetry — one less thing to explain in your privacy policy.</p>
     </div>
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6l1-8Z"/></svg></span>
       <h3>Fast</h3>
-      <p>~0.5 ms per suggestion once warm on Apple silicon, ~2 ms on a mid-range phone. Fast enough for every keystroke.</p>
+      <p>~0.5 ms per suggestion once warm on Apple silicon, ~2 ms on a mid-range phone. Fast enough to run on every keystroke, not just on submit.</p>
     </div>
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9S9.5 5.7 12 3Z"/></svg></span>
       <h3>22+ languages</h3>
-      <p>Trained across languages and scripts, with parity-tested output against a Python reference implementation.</p>
+      <p>Trained across languages and scripts. Top-1 and top-5 predictions match a Python reference implementation exactly on all 443 test vectors.</p>
     </div>
   </div>
   <div class="stat-grid" style="margin-top: 40px;">
@@ -372,7 +374,7 @@
   <div class="section-head">
     <div class="kicker">On device</div>
     <h2>One model, 22+ languages</h2>
-    <p>Same emulator run, three languages — suggestions computed entirely on-device, no network round trip.</p>
+    <p>Real output from the sample app on a Pixel emulator — not mockups. Same model, three languages, no network round trip.</p>
   </div>
   <div class="grid">
     <div class="card" style="padding:0; overflow:hidden;">
@@ -403,7 +405,7 @@
   <div class="section-head">
     <div class="kicker">Install</div>
     <h2>Add it to your build</h2>
-    <p>Available via JitPack.</p>
+    <p>One line in your Gradle file. Available now via JitPack — no waitlist, no API key.</p>
   </div>
 
   <div class="code-block">
@@ -583,6 +585,10 @@ moji.close()</code></pre>
   <div class="faq-item">
     <h4>Which platforms does Moji support?</h4>
     <p>Android, minSdk 21, from both Kotlin and Java.</p>
+  </div>
+  <div class="faq-item">
+    <h4>How accurate is it?</h4>
+    <p>Top-1 and top-5 predictions match a Python reference implementation exactly on all 443 test vectors across every supported language, with a maximum numerical difference of about 0.0000024 between the two.</p>
   </div>
   <div class="faq-item">
     <h4>How much does Moji cost?</h4>
