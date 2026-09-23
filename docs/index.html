@@ -370,16 +370,8 @@ dependencies {
       <div class="code-label">Kotlin</div>
       <pre><code class="language-kotlin">val moji = Moji(context)
 
-val top = moji.suggestions("Pay my bills")
-top.first().emoji        // "💰"
-top.first().name         // "money bag"
-top.first().confidence   // 0.36
-
-moji.suggestions(
-    "Great job thumbs up",
-    limit = 5,
-    skinTone = SkinTone.MEDIUM
-)
+val top = moji.suggestions("Pay my bills").first()
+top.emoji   // "💰"
 
 moji.close()</code></pre>
     </div>
