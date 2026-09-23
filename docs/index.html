@@ -226,6 +226,50 @@
   th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
   td code { background: var(--code-bg); padding: 2px 6px; border-radius: 5px; font-size: 12.5px; }
 
+  /* Stat cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+  .stat-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 20px; text-align: center;
+  }
+  .stat-card .stat-value { font-size: clamp(28px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; color: var(--accent); }
+  .stat-card .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); margin-top: 6px; }
+  .stat-card .stat-note { font-size: 12.5px; color: var(--text-secondary); margin-top: 6px; }
+
+  /* Use-case example line */
+  .usecase .example {
+    display: block; margin-top: 10px; font-size: 13px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--text-secondary); background: var(--code-bg); border-radius: 8px;
+    padding: 7px 10px;
+  }
+
+  /* Copy button on code blocks */
+  .code-block { position: relative; }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text-secondary); font-size: 11px; font-weight: 600;
+    padding: 5px 9px; cursor: pointer; font-family: inherit;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--text-secondary); }
+  .copy-btn.copied { color: var(--accent); border-color: var(--accent); }
+
+  /* Prompt block for AI coding agents */
+  .prompt-block {
+    background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px; margin-top: 16px;
+  }
+  .prompt-block .code-label { margin-bottom: 10px; }
+  .prompt-block pre { background: var(--card-bg); }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+  .faq-item:first-child { padding-top: 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item h4 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+  .faq-item p { font-size: 14.5px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+
   /* Footer */
   footer {
     max-width: 980px; margin: 0 auto; padding: 50px 22px 80px;
@@ -251,6 +295,7 @@
       <a href="#usage">Usage</a>
       <a href="#use-cases">Use cases</a>
       <a href="#api">API</a>
+      <a href="#faq">FAQ</a>
     </div>
     <a class="nav-cta" href="https://github.com/rajumark/moji">GitHub ↗</a>
   </div>
@@ -301,6 +346,26 @@
       <p>Trained across languages and scripts, with parity-tested output against a Python reference implementation.</p>
     </div>
   </div>
+  <div class="stat-grid" style="margin-top: 40px;">
+    <div class="stat-card">
+      <div class="stat-value">~0.5ms</div>
+      <div class="stat-label">Per suggestion</div>
+      <div class="stat-note">once warm, on device</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">~5MB</div>
+      <div class="stat-label">On-device</div>
+      <div class="stat-note">model + tokenizer, in the AAR</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">22+</div>
+      <div class="stat-label">Languages</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">1000</div>
+      <div class="stat-label">Emoji vocabulary</div>
+    </div>
+  </div>
 </section>
 
 <section id="screenshots">
@@ -343,6 +408,7 @@
 
   <div class="code-block">
     <div class="code-label">JitPack <span class="tag-pill live">live</span></div>
+    <button class="copy-btn" type="button">Copy</button>
     <pre><code class="language-kotlin">// settings.gradle.kts
 dependencyResolutionManagement {
     repositories {
@@ -356,6 +422,28 @@ dependencies {
     implementation("com.github.rajumark:moji:v1.0.0")
 }</code></pre>
   </div>
+
+  <div class="prompt-block">
+    <div class="code-label">Build with a prompt</div>
+    <div class="code-block">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre><code>Add Moji from rajumark to this Android project (Kotlin).
+
+What it does: on-device emoji suggestions from text, in 22+ languages, ~5 MB, no dependencies, no network.
+
+Install (JitPack):
+  settings.gradle.kts: add maven { url = uri("https://jitpack.io") } to repositories
+  build.gradle.kts: implementation("com.github.rajumark:moji:v1.0.0")
+
+Usage:
+  val moji = Moji(context)
+  val top = moji.suggestions("Pay my bills").first()
+  top.emoji
+
+Repo: https://github.com/rajumark/moji#readme
+Add the dependency, then follow the README for the exact API and current version.</code></pre>
+    </div>
+  </div>
 </section>
 
 <section id="usage">
@@ -368,6 +456,7 @@ dependencies {
   <div class="two-col">
     <div class="code-block">
       <div class="code-label">Kotlin</div>
+      <button class="copy-btn" type="button">Copy</button>
       <pre><code class="language-kotlin">val moji = Moji(context)
 
 val top = moji.suggestions("Pay my bills").first()
@@ -377,6 +466,7 @@ moji.close()</code></pre>
     </div>
     <div class="code-block">
       <div class="code-label">Java</div>
+      <button class="copy-btn" type="button">Copy</button>
       <pre><code class="language-java">try (Moji moji = new Moji(context)) {
     List&lt;MojiSuggestion&gt; s =
         moji.suggestions("Pay my bills");
@@ -397,6 +487,7 @@ moji.close()</code></pre>
       <div>
         <h4>Custom keyboards &amp; IMEs</h4>
         <p>Power a live emoji suggestion bar above the keyboard, updated on every keystroke without leaving the device.</p>
+        <code class="example">"Pay my bills" → 💰 💸 🧾</code>
       </div>
     </div>
     <div class="usecase">
@@ -404,6 +495,7 @@ moji.close()</code></pre>
       <div>
         <h4>Chat &amp; messaging apps</h4>
         <p>Suggest reactions or inline emoji as a user types a message, the way modern chat apps auto-complete tone.</p>
+        <code class="example">"Walk the dog" → 🐶 ❤️ 🚶</code>
       </div>
     </div>
     <div class="usecase">
@@ -411,6 +503,7 @@ moji.close()</code></pre>
       <div>
         <h4>Social &amp; caption composers</h4>
         <p>Recommend emoji for post captions and status updates while the user is still writing them.</p>
+        <code class="example">"Movie night at home" → 🍿 🛋️ 🎬</code>
       </div>
     </div>
     <div class="usecase">
@@ -418,6 +511,7 @@ moji.close()</code></pre>
       <div>
         <h4>Support &amp; chatbot UIs</h4>
         <p>Give automated responses a quick, on-brand emoji reaction without a round trip to a moderation or NLP service.</p>
+        <code class="example">"Great job thumbs up" → 👍 👏 😎</code>
       </div>
     </div>
     <div class="usecase">
@@ -425,6 +519,7 @@ moji.close()</code></pre>
       <div>
         <h4>Notes &amp; journaling apps</h4>
         <p>Tag entries with a mood or topic emoji automatically, useful for journal timelines and mood tracking.</p>
+        <code class="example">"Dentist appointment tomorrow" → 👇 🧑‍⚕️ 😬</code>
       </div>
     </div>
     <div class="usecase">
@@ -432,6 +527,7 @@ moji.close()</code></pre>
       <div>
         <h4>Reviews &amp; feedback forms</h4>
         <p>Turn free-text reviews into a quick emoji sentiment tag alongside the star rating, computed on-device.</p>
+        <code class="example">"Amazing service, highly recommend" → 😍 🔥 ❤️</code>
       </div>
     </div>
     <div class="usecase">
@@ -439,6 +535,7 @@ moji.close()</code></pre>
       <div>
         <h4>Notifications &amp; quick replies</h4>
         <p>Offer emoji-only quick-reply chips generated from the incoming notification text.</p>
+        <code class="example">"Happy birthday! 🎉" → 😂 🎂 😘</code>
       </div>
     </div>
     <div class="usecase">
@@ -446,6 +543,7 @@ moji.close()</code></pre>
       <div>
         <h4>Accessibility &amp; low-effort input</h4>
         <p>Let users express a full thought with a single tap on a suggested emoji instead of typing it out.</p>
+        <code class="example">"जिम जाना है" → ✅ 👥 📋</code>
       </div>
     </div>
   </div>
@@ -469,6 +567,33 @@ moji.close()</code></pre>
   </table>
 </section>
 
+<section id="faq">
+  <div class="section-head">
+    <div class="kicker">FAQ</div>
+    <h2>Questions</h2>
+  </div>
+  <div class="faq-item">
+    <h4>What is Moji?</h4>
+    <p>An Android library: give it a task or a message and it returns the emoji that fit, ranked by confidence, in 22+ languages.</p>
+  </div>
+  <div class="faq-item">
+    <h4>Does Moji run on device?</h4>
+    <p>Yes. Inference happens entirely on-device in plain Kotlin — no server call, no network permission, no telemetry.</p>
+  </div>
+  <div class="faq-item">
+    <h4>Which platforms does Moji support?</h4>
+    <p>Android, minSdk 21, from both Kotlin and Java.</p>
+  </div>
+  <div class="faq-item">
+    <h4>How much does Moji cost?</h4>
+    <p>It's free and open source, licensed Apache-2.0. No usage limits, no account required.</p>
+  </div>
+  <div class="faq-item">
+    <h4>How fast and how big is it?</h4>
+    <p>About 0.5 ms per suggestion once warm, and about 5 MB added to your APK for the model and tokenizer.</p>
+  </div>
+</section>
+
 <footer>
   <div class="foot-links">
     <a href="https://github.com/rajumark/moji">GitHub</a>
@@ -483,7 +608,25 @@ moji.close()</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
 <script>
-  if (window.hljs) { document.querySelectorAll("pre code").forEach(function (b) { hljs.highlightElement(b); }); }
+  if (window.hljs) { document.querySelectorAll('pre code[class*="language-"]').forEach(function (b) { hljs.highlightElement(b); }); }
+</script>
+
+<script>
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var code = btn.closest(".code-block").querySelector("pre code");
+      if (!code) return;
+      navigator.clipboard.writeText(code.textContent).then(function () {
+        var original = btn.textContent;
+        btn.textContent = "Copied";
+        btn.classList.add("copied");
+        window.setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove("copied");
+        }, 1500);
+      });
+    });
+  });
 </script>
 
 <script>
