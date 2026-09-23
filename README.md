@@ -43,6 +43,15 @@ dependencies {
 }
 ```
 
+## Screenshots
+
+Same model, same device, three languages — suggestions run entirely on-device, no network round trip.
+
+| Hindi | Spanish | French |
+|---|---|---|
+| ![Hindi example](docs/screenshots/moji-hindi.png) | ![Spanish example](docs/screenshots/moji-spanish.png) | ![French example](docs/screenshots/moji-french.png) |
+| "जिम जाना है" | "Partido de fútbol esta noche" | "Réserver un vol pour Paris" |
+
 ## Use
 
 ```kotlin
