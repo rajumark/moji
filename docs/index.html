@@ -127,7 +127,9 @@
     text-align: left;
     max-width: 640px; margin: 0 auto;
     border: 1px solid var(--border);
+    transition: opacity 0.35s ease;
   }
+  .hero-demo.is-fading { opacity: 0; }
   .hero-demo .prompt { color: var(--text-secondary); font-size: 13px; margin-bottom: 10px; }
   .hero-demo .input-row {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
@@ -231,11 +233,11 @@
     <a class="btn btn-primary" href="#install">Get started</a>
     <a class="btn btn-secondary" href="https://github.com/rajumark/moji">View source</a>
   </div>
-  <div class="hero-demo">
-    <div class="prompt">moji.suggestions("Pay my bills")</div>
-    <div class="input-row">Pay my bills</div>
-    <div class="emoji-row">
-      <span>💰</span><span>💸</span><span>🧾</span><span>🎟️</span><span>💵</span><span>💳</span>
+  <div class="hero-demo" id="heroDemo">
+    <div class="prompt" id="demoPrompt">moji.suggestions("Pay my bills")</div>
+    <div class="input-row" id="demoInput">Pay my bills</div>
+    <div class="emoji-row" id="demoEmojis">
+      <span>💰</span><span>💸</span><span>🧾</span><span>🎟️</span><span>😍</span><span>💵</span><span>💳</span><span>💯</span>
     </div>
   </div>
 </header>
@@ -453,6 +455,48 @@ moji.close()</code></pre>
   </div>
   <div class="copyright">© 2026 Hoverfly · Moji</div>
 </footer>
+
+<script>
+  // Real output from the on-device model (Pixel emulator), one example per language/use case.
+  var DEMO_EXAMPLES = [
+    { text: "Pay my bills", emoji: ["💰","💸","🧾","🎟️","😍","💵","💳","💯"] },
+    { text: "Dentist appointment tomorrow", emoji: ["👇","🧑‍⚕️","😬","🤦","😷","👋","😂","😊"] },
+    { text: "Happy birthday! 🎉", emoji: ["😂","🎂","😘","🥳","😍","😊","💕","😁"] },
+    { text: "Walk the dog", emoji: ["🐶","❤️","🚶","🐶","😊","🐕‍🦺","🦌","😎"] },
+    { text: "犬の散歩", emoji: ["🚶","🐕","🐾","🐶","🦧","🦁","🧳","🏠"] },
+    { text: "Réserver un vol pour Paris", emoji: ["❤️","🏆","📝","✅","⭐","🌍","💪","🛡️"] },
+    { text: "जिम जाना है", emoji: ["✅","👥","📋","👀","🙏","🧠","🏆","✨"] },
+    { text: "Partido de fútbol esta noche", emoji: ["⚽","🏈","🏀","🏃","🏟️","🥅","🏆","🏃"] },
+    { text: "Great job thumbs up", emoji: ["👍","👏","😎","🙌","😊","🔝","👊","🔥"] },
+    { text: "Movie night at home", emoji: ["🍿","🛋️","🎬","📺","😜","🏠","🏡","❤️"] },
+  ];
+
+  (function () {
+    var demo = document.getElementById("heroDemo");
+    var promptEl = document.getElementById("demoPrompt");
+    var inputEl = document.getElementById("demoInput");
+    var emojiEl = document.getElementById("demoEmojis");
+    if (!demo || !promptEl || !inputEl || !emojiEl) return;
+
+    var i = 0;
+    function render(example) {
+      promptEl.textContent = 'moji.suggestions("' + example.text + '")';
+      inputEl.textContent = example.text;
+      emojiEl.innerHTML = example.emoji.map(function (e) { return "<span>" + e + "</span>"; }).join("");
+    }
+
+    function next() {
+      demo.classList.add("is-fading");
+      window.setTimeout(function () {
+        i = (i + 1) % DEMO_EXAMPLES.length;
+        render(DEMO_EXAMPLES[i]);
+        demo.classList.remove("is-fading");
+      }, 350);
+    }
+
+    window.setInterval(next, 8000);
+  })();
+</script>
 
 </body>
 </html>
