@@ -17,7 +17,7 @@ Moji(context).use { moji ->
 
 ## Install
 
-Available now via [JitPack](https://jitpack.io/#rajumark/moji):
+Available via [JitPack](https://jitpack.io/#rajumark/moji):
 
 ```kotlin
 // settings.gradle.kts
@@ -31,15 +31,6 @@ dependencyResolutionManagement {
 // build.gradle.kts
 dependencies {
     implementation("com.github.rajumark:moji:v1.0.0")
-}
-```
-
-Maven Central release (`io.github.rajumark:moji:1.0.0`) is pending — see [PUBLISHING.md](PUBLISHING.md) for status. Once it's live:
-
-```kotlin
-// build.gradle.kts
-dependencies {
-    implementation("io.github.rajumark:moji:1.0.0")
 }
 ```
 

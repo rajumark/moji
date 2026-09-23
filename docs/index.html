@@ -176,8 +176,6 @@
     margin-left: 8px; vertical-align: 2px;
   }
   .tag-pill.live { background: #d1f7dd; color: #0a6b2c; }
-  :root[data-theme="dark"] .tag-pill.live, @media (prefers-color-scheme: dark) { }
-  .tag-pill.pending { background: #ffedc2; color: #8a5a00; }
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
@@ -307,7 +305,7 @@
   <div class="section-head">
     <div class="kicker">Install</div>
     <h2>Add it to your build</h2>
-    <p>Available today via JitPack. A Maven Central release is on the way.</p>
+    <p>Available via JitPack.</p>
   </div>
 
   <div class="code-block">
@@ -323,14 +321,6 @@ dependencyResolutionManagement {
 // build.gradle.kts
 dependencies {
     implementation("com.github.rajumark:moji:v1.0.0")
-}</code></pre>
-  </div>
-
-  <div class="code-block">
-    <div class="code-label">Maven Central <span class="tag-pill pending">pending</span></div>
-    <pre><code>// build.gradle.kts
-dependencies {
-    implementation("io.github.rajumark:moji:1.0.0")
 }</code></pre>
   </div>
 </section>
