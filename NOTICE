@@ -1,0 +1,17 @@
+Moji
+Copyright 2026 The Moji authors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The bundled model (moji/src/main/assets/moji) was trained on or derived from:
+
+  - emojinize-multilingual ............... CC-BY-4.0
+  - text-to-emoji ........................ CC-BY-4.0
+  - EmojiVerse ........................... CC-BY-4.0
+  - Tatoeba sentences .................... CC-BY 2.0 FR  (https://tatoeba.org)
+  - SemEval-2018 emoji prediction (repack) Apache-2.0
+  - StockTwits emoji dataset ............. MIT
+  - paraphrase-multilingual-MiniLM-L12-v2  Apache-2.0  (teacher for distillation)
+  - Unicode CLDR annotations, emoji-test.txt   Unicode License v3
+  - omarkamali/emoji-map ................. license not stated   (TODO: resolve before public release)
+  - badrex/LLM-generated-emoji-descriptions  "cc", version not stated (TODO: resolve before public release)
