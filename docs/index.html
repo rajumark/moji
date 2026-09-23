@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Moji — on-device emoji suggestions for Android</title>
 <meta name="description" content="Moji suggests the right emoji for any text, entirely on-device. No dependencies, no network, ~5 MB, 22+ languages.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙂</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect x=%221%22 y=%221%22 width=%2222%22 height=%2222%22 rx=%227%22 fill=%22%230071e3%22/><circle cx=%228.5%22 cy=%2210%22 r=%221.4%22 fill=%22%23fff%22/><circle cx=%2215.5%22 cy=%2210%22 r=%221.4%22 fill=%22%23fff%22/><path d=%22M7.5 14.5c1 1.6 3 2.5 4.5 2.5s3.5-.9 4.5-2.5%22 stroke=%22%23fff%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 fill=%22none%22/></svg>">
 <style>
   :root {
     --bg: #ffffff;
@@ -20,6 +20,12 @@
     --card-bg: #ffffff;
     --nav-bg: rgba(255, 255, 255, 0.8);
     --pill-bg: #f5f5f7;
+    --syn-comment: #6e7781;
+    --syn-keyword: #cf222e;
+    --syn-string: #0a3069;
+    --syn-number: #0550ae;
+    --syn-function: #8250df;
+    --syn-type: #953800;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -35,6 +41,12 @@
       --card-bg: #1d1d1f;
       --nav-bg: rgba(0, 0, 0, 0.8);
       --pill-bg: #2c2c2e;
+      --syn-comment: #8b949e;
+      --syn-keyword: #ff7b72;
+      --syn-string: #a5d6ff;
+      --syn-number: #79c0ff;
+      --syn-function: #d2a8ff;
+      --syn-type: #ffa657;
     }
   }
   :root[data-theme="dark"] {
@@ -50,6 +62,12 @@
     --card-bg: #1d1d1f;
     --nav-bg: rgba(0, 0, 0, 0.8);
     --pill-bg: #2c2c2e;
+    --syn-comment: #8b949e;
+    --syn-keyword: #ff7b72;
+    --syn-string: #a5d6ff;
+    --syn-number: #79c0ff;
+    --syn-function: #d2a8ff;
+    --syn-type: #ffa657;
   }
 
   * { box-sizing: border-box; }
@@ -155,7 +173,8 @@
     background: var(--bg-subtle); border-radius: 18px; padding: 28px;
     border: 1px solid var(--border);
   }
-  .card .icon { font-size: 32px; margin-bottom: 14px; display: block; }
+  .card .icon { width: 30px; height: 30px; margin-bottom: 14px; color: var(--accent); display: block; }
+  .card .icon svg { display: block; width: 100%; height: 100%; }
   .card h3 { font-size: 19px; font-weight: 600; margin: 0 0 8px; }
   .card p { font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
 
@@ -167,6 +186,14 @@
     margin: 0;
   }
   code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+  .hljs-comment, .hljs-quote { color: var(--syn-comment); font-style: italic; }
+  .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-meta .hljs-keyword { color: var(--syn-keyword); }
+  .hljs-string, .hljs-doctag, .hljs-regexp { color: var(--syn-string); }
+  .hljs-number { color: var(--syn-number); }
+  .hljs-title, .hljs-title.function_, .hljs-title.class_ { color: var(--syn-function); }
+  .hljs-built_in, .hljs-type, .hljs-class { color: var(--syn-type); }
+  .hljs-variable, .hljs-attr, .hljs-params, .hljs-property { color: var(--code-text); }
+  .hljs-meta { color: var(--syn-comment); }
   .code-label {
     font-size: 12px; font-weight: 600; color: var(--text-secondary);
     text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
@@ -188,7 +215,8 @@
     display: flex; gap: 16px; padding: 22px;
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
   }
-  .usecase .emoji { font-size: 30px; flex: none; line-height: 1; }
+  .usecase .icon { width: 26px; height: 26px; flex: none; color: var(--accent); }
+  .usecase .icon svg { display: block; width: 100%; height: 100%; }
   .usecase h4 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
   .usecase p { margin: 0; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; }
 
@@ -213,7 +241,10 @@
 
 <nav>
   <div class="nav-inner">
-    <div class="nav-brand">🙂 Moji</div>
+    <div class="nav-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="1" y="1" width="22" height="22" rx="7" fill="var(--accent)"/><circle cx="8.5" cy="10" r="1.4" fill="#fff"/><circle cx="15.5" cy="10" r="1.4" fill="#fff"/><path d="M7.5 14.5c1 1.6 3 2.5 4.5 2.5s3.5-.9 4.5-2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+      Moji
+    </div>
     <div class="nav-links">
       <a href="#screenshots">Screenshots</a>
       <a href="#install">Install</a>
@@ -250,22 +281,22 @@
   </div>
   <div class="grid">
     <div class="card">
-      <span class="icon">📦</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5v-7Z"/><path d="M3 8.5 12 14l9-5.5"/><path d="M12 14v7"/></svg></span>
       <h3>No dependencies</h3>
       <p>Pure Kotlin inference — no ONNX Runtime, no TFLite, no native code. Adds about 5 MB to your APK.</p>
     </div>
     <div class="card">
-      <span class="icon">🔒</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
       <h3>Private &amp; offline</h3>
       <p>The model ships inside the AAR. No network calls, no permissions, no telemetry, ever.</p>
     </div>
     <div class="card">
-      <span class="icon">⚡</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6l1-8Z"/></svg></span>
       <h3>Fast</h3>
       <p>~0.5 ms per suggestion once warm on Apple silicon, ~2 ms on a mid-range phone. Fast enough for every keystroke.</p>
     </div>
     <div class="card">
-      <span class="icon">🌍</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9S9.5 5.7 12 3Z"/></svg></span>
       <h3>22+ languages</h3>
       <p>Trained across languages and scripts, with parity-tested output against a Python reference implementation.</p>
     </div>
@@ -312,7 +343,7 @@
 
   <div class="code-block">
     <div class="code-label">JitPack <span class="tag-pill live">live</span></div>
-    <pre><code>// settings.gradle.kts
+    <pre><code class="language-kotlin">// settings.gradle.kts
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
@@ -337,7 +368,7 @@ dependencies {
   <div class="two-col">
     <div class="code-block">
       <div class="code-label">Kotlin</div>
-      <pre><code>val moji = Moji(context)
+      <pre><code class="language-kotlin">val moji = Moji(context)
 
 val top = moji.suggestions("Pay my bills")
 top.first().emoji        // "💰"
@@ -354,7 +385,7 @@ moji.close()</code></pre>
     </div>
     <div class="code-block">
       <div class="code-label">Java</div>
-      <pre><code>try (Moji moji = new Moji(context)) {
+      <pre><code class="language-java">try (Moji moji = new Moji(context)) {
     List&lt;MojiSuggestion&gt; s =
         moji.suggestions("Pay my bills");
 }</code></pre>
@@ -370,56 +401,56 @@ moji.close()</code></pre>
   </div>
   <div class="usecase-list">
     <div class="usecase">
-      <div class="emoji">⌨️</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6 14h12"/></svg></div>
       <div>
         <h4>Custom keyboards &amp; IMEs</h4>
         <p>Power a live emoji suggestion bar above the keyboard, updated on every keystroke without leaving the device.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">💬</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1.2-4.3A8 8 0 1 1 21 12Z"/></svg></div>
       <div>
         <h4>Chat &amp; messaging apps</h4>
         <p>Suggest reactions or inline emoji as a user types a message, the way modern chat apps auto-complete tone.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">📝</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
       <div>
         <h4>Social &amp; caption composers</h4>
         <p>Recommend emoji for post captions and status updates while the user is still writing them.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">🤖</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="3"/><path d="M12 9V5"/><circle cx="12" cy="3.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="14.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="14.5" r="1" fill="currentColor" stroke="none"/><path d="M2 13v3M22 13v3"/></svg></div>
       <div>
         <h4>Support &amp; chatbot UIs</h4>
         <p>Give automated responses a quick, on-brand emoji reaction without a round trip to a moderation or NLP service.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">🗒️</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v18M13 8h4M13 12h4M13 16h3"/></svg></div>
       <div>
         <h4>Notes &amp; journaling apps</h4>
         <p>Tag entries with a mood or topic emoji automatically, useful for journal timelines and mood tracking.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">🛍️</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5l2.2 4.6 5 .7-3.6 3.6.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.6 5-.7Z"/></svg></div>
       <div>
         <h4>Reviews &amp; feedback forms</h4>
         <p>Turn free-text reviews into a quick emoji sentiment tag alongside the star rating, computed on-device.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">🔔</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16Z"/><path d="M9.5 21a2.5 2.5 0 0 0 5 0"/></svg></div>
       <div>
         <h4>Notifications &amp; quick replies</h4>
         <p>Offer emoji-only quick-reply chips generated from the incoming notification text.</p>
       </div>
     </div>
     <div class="usecase">
-      <div class="emoji">♿</div>
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.5" fill="currentColor" stroke="none"/><path d="M4 8.5h16M12 8.5v5M8 21l4-7 4 7M8.5 13.5 5 16M15.5 13.5 19 16"/></svg></div>
       <div>
         <h4>Accessibility &amp; low-effort input</h4>
         <p>Let users express a full thought with a single tap on a suggested emoji instead of typing it out.</p>
@@ -455,6 +486,13 @@ moji.close()</code></pre>
   </div>
   <div class="copyright">© 2026 Hoverfly · Moji</div>
 </footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+<script>
+  if (window.hljs) { document.querySelectorAll("pre code").forEach(function (b) { hljs.highlightElement(b); }); }
+</script>
 
 <script>
   // Real output from the on-device model (Pixel emulator), one example per language/use case.
