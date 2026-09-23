@@ -2,6 +2,11 @@
 
 Publishing uses the [vanniktech maven-publish plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/). It uploads to the Maven Central Portal and produces the AAR, sources jar, Dokka javadoc jar, POM and signatures.
 
+## Status (2026-09-23)
+
+- **JitPack: live.** `com.github.rajumark:moji:v1.0.0` is published and resolvable — see the README's Install section.
+- **Maven Central: blocked.** The upload validated and was rejected with `Namespace 'io.github.rajumark' is not allowed` (deployment id `0ff5fe17-d014-4892-9b6f-ba97d55c165b`). The Central Portal account currently signed in doesn't own the verified `io.github.rajumark` namespace, even though it's the same GitHub identity (`rajumark`) — looks like a duplicate-account issue on Sonatype's side. Emailed `central-support@sonatype.com` to ask them to identify/merge the account that owns the namespace. Once that's resolved, re-run `./gradlew publishAndReleaseToMavenCentral` — everything else (signing, tests, sample build against the artifact) already passed.
+
 ## One-time setup (about an hour)
 
 1. **Maven Central account.** Sign in at https://central.sonatype.com with the GitHub account `rajumark`. The namespace `io.github.rajumark` is verified automatically; check that it shows as *Verified* under Namespaces.

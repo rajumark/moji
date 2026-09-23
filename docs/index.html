@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moji — on-device emoji suggestions for Android</title>
+<meta name="description" content="Moji suggests the right emoji for any text, entirely on-device. No dependencies, no network, ~5 MB, 22+ languages.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙂</text></svg>">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-subtle: #f5f5f7;
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --border: #d2d2d7;
+    --accent: #0071e3;
+    --accent-hover: #0077ed;
+    --code-bg: #f5f5f7;
+    --code-text: #1d1d1f;
+    --card-bg: #ffffff;
+    --nav-bg: rgba(255, 255, 255, 0.8);
+    --pill-bg: #f5f5f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #000000;
+      --bg-subtle: #1d1d1f;
+      --text: #f5f5f7;
+      --text-secondary: #a1a1a6;
+      --border: #424245;
+      --accent: #2997ff;
+      --accent-hover: #52a9ff;
+      --code-bg: #1d1d1f;
+      --code-text: #f5f5f7;
+      --card-bg: #1d1d1f;
+      --nav-bg: rgba(0, 0, 0, 0.8);
+      --pill-bg: #2c2c2e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #000000;
+    --bg-subtle: #1d1d1f;
+    --text: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --border: #424245;
+    --accent: #2997ff;
+    --accent-hover: #52a9ff;
+    --code-bg: #1d1d1f;
+    --code-text: #f5f5f7;
+    --card-bg: #1d1d1f;
+    --nav-bg: rgba(0, 0, 0, 0.8);
+    --pill-bg: #2c2c2e;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--nav-bg);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 980px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 22px; height: 48px;
+    font-size: 14px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: var(--text); font-size: 12px; opacity: 0.85; }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    font-size: 12px; padding: 6px 14px; border-radius: 980px;
+    background: var(--accent); color: #fff !important; opacity: 1 !important;
+  }
+  .nav-cta:hover { background: var(--accent-hover); }
+
+  /* Hero */
+  .hero {
+    max-width: 980px; margin: 0 auto;
+    padding: 90px 22px 60px;
+    text-align: center;
+  }
+  .hero .eyebrow {
+    font-size: 17px; font-weight: 600; color: var(--accent); margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 700; letter-spacing: -0.015em;
+    margin: 0 0 12px; line-height: 1.05;
+  }
+  .hero p.tagline {
+    font-size: clamp(19px, 3vw, 24px);
+    color: var(--text-secondary);
+    max-width: 640px; margin: 0 auto 32px;
+    font-weight: 400;
+  }
+  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 11px 22px; border-radius: 980px; font-size: 15px; font-weight: 400;
+    border: 1px solid transparent; cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); color: #fff !important; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--accent) !important; border-color: var(--accent); }
+  .btn-secondary:hover { background: var(--accent); color: #fff !important; }
+
+  .hero-demo {
+    background: var(--bg-subtle);
+    border-radius: 18px;
+    padding: 28px;
+    text-align: left;
+    max-width: 640px; margin: 0 auto;
+    border: 1px solid var(--border);
+  }
+  .hero-demo .prompt { color: var(--text-secondary); font-size: 13px; margin-bottom: 10px; }
+  .hero-demo .input-row {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 15px; margin-bottom: 14px;
+  }
+  .emoji-row { display: flex; gap: 10px; flex-wrap: wrap; font-size: 28px; }
+  .emoji-row span { transition: transform 0.15s; }
+
+  /* Sections */
+  section { max-width: 980px; margin: 0 auto; padding: 70px 22px; border-top: 1px solid var(--border); }
+  section:first-of-type { border-top: none; }
+  .section-head { text-align: center; margin-bottom: 44px; }
+  .section-head .kicker {
+    font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .section-head h2 { font-size: clamp(30px, 4vw, 40px); font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .section-head p { color: var(--text-secondary); font-size: 18px; max-width: 620px; margin: 0 auto; }
+
+  /* Feature grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--bg-subtle); border-radius: 18px; padding: 28px;
+    border: 1px solid var(--border);
+  }
+  .card .icon { font-size: 32px; margin-bottom: 14px; display: block; }
+  .card h3 { font-size: 19px; font-weight: 600; margin: 0 0 8px; }
+  .card p { font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
+
+  /* Code blocks */
+  pre {
+    background: var(--code-bg); color: var(--code-text);
+    border-radius: 14px; padding: 20px 22px; overflow-x: auto;
+    font-size: 13.5px; line-height: 1.6; border: 1px solid var(--border);
+    margin: 0;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+  .code-label {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+  .code-block { margin-bottom: 22px; }
+  .tag-pill {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px;
+    border-radius: 980px; background: var(--pill-bg); color: var(--text-secondary);
+    margin-left: 8px; vertical-align: 2px;
+  }
+  .tag-pill.live { background: #d1f7dd; color: #0a6b2c; }
+  :root[data-theme="dark"] .tag-pill.live, @media (prefers-color-scheme: dark) { }
+  .tag-pill.pending { background: #ffedc2; color: #8a5a00; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Use cases */
+  .usecase-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .usecase {
+    display: flex; gap: 16px; padding: 22px;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+  }
+  .usecase .emoji { font-size: 30px; flex: none; line-height: 1; }
+  .usecase h4 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+  .usecase p { margin: 0; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* API table */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td code { background: var(--code-bg); padding: 2px 6px; border-radius: 5px; font-size: 12.5px; }
+
+  /* Footer */
+  footer {
+    max-width: 980px; margin: 0 auto; padding: 50px 22px 80px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  footer .foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
+  footer .foot-links a { font-size: 13px; color: var(--text-secondary); }
+  footer .copyright { font-size: 12px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">🙂 Moji</div>
+    <div class="nav-links">
+      <a href="#install">Install</a>
+      <a href="#usage">Usage</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#api">API</a>
+    </div>
+    <a class="nav-cta" href="https://github.com/rajumark/moji">GitHub ↗</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Moji · by Hoverfly</div>
+  <h1>The right emoji,<br>every keystroke.</h1>
+  <p class="tagline">An on-device Android library that turns any text into ranked emoji suggestions — private, offline, and about 5 MB. No dependencies, no network, no telemetry.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="#install">Get started</a>
+    <a class="btn btn-secondary" href="https://github.com/rajumark/moji">View source</a>
+  </div>
+  <div class="hero-demo">
+    <div class="prompt">moji.suggestions("Pay my bills")</div>
+    <div class="input-row">Pay my bills</div>
+    <div class="emoji-row">
+      <span>💰</span><span>💸</span><span>🧾</span><span>🎟️</span><span>💵</span><span>💳</span>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="section-head">
+    <div class="kicker">Why Moji</div>
+    <h2>Built for a keyboard, not a datacenter</h2>
+    <p>Everything runs in-process, in plain Kotlin — no runtime to bundle, no round trip to wait on.</p>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <span class="icon">📦</span>
+      <h3>No dependencies</h3>
+      <p>Pure Kotlin inference — no ONNX Runtime, no TFLite, no native code. Adds about 5 MB to your APK.</p>
+    </div>
+    <div class="card">
+      <span class="icon">🔒</span>
+      <h3>Private &amp; offline</h3>
+      <p>The model ships inside the AAR. No network calls, no permissions, no telemetry, ever.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⚡</span>
+      <h3>Fast</h3>
+      <p>~0.5 ms per suggestion once warm on Apple silicon, ~2 ms on a mid-range phone. Fast enough for every keystroke.</p>
+    </div>
+    <div class="card">
+      <span class="icon">🌍</span>
+      <h3>22+ languages</h3>
+      <p>Trained across languages and scripts, with parity-tested output against a Python reference implementation.</p>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="section-head">
+    <div class="kicker">Install</div>
+    <h2>Add it to your build</h2>
+    <p>Available today via JitPack. A Maven Central release is on the way.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">JitPack <span class="tag-pill live">live</span></div>
+    <pre><code>// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// build.gradle.kts
+dependencies {
+    implementation("com.github.rajumark:moji:v1.0.0")
+}</code></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-label">Maven Central <span class="tag-pill pending">pending</span></div>
+    <pre><code>// build.gradle.kts
+dependencies {
+    implementation("io.github.rajumark:moji:1.0.0")
+}</code></pre>
+  </div>
+</section>
+
+<section id="usage">
+  <div class="section-head">
+    <div class="kicker">Usage</div>
+    <h2>Three lines to suggestions</h2>
+    <p>Load once, reuse the instance, and call <code>suggestions()</code> on every keystroke — it's thread-safe and fast enough for it.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="code-block">
+      <div class="code-label">Kotlin</div>
+      <pre><code>val moji = Moji(context)
+
+val top = moji.suggestions("Pay my bills")
+top.first().emoji        // "💰"
+top.first().name         // "money bag"
+top.first().confidence   // 0.36
+
+moji.suggestions(
+    "Great job thumbs up",
+    limit = 5,
+    skinTone = SkinTone.MEDIUM
+)
+
+moji.close()</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-label">Java</div>
+      <pre><code>try (Moji moji = new Moji(context)) {
+    List&lt;MojiSuggestion&gt; s =
+        moji.suggestions("Pay my bills");
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<section id="use-cases">
+  <div class="section-head">
+    <div class="kicker">Use cases</div>
+    <h2>Where Moji fits</h2>
+    <p>Anywhere text is composed, one call turns it into an emoji rail — no server, no delay.</p>
+  </div>
+  <div class="usecase-list">
+    <div class="usecase">
+      <div class="emoji">⌨️</div>
+      <div>
+        <h4>Custom keyboards &amp; IMEs</h4>
+        <p>Power a live emoji suggestion bar above the keyboard, updated on every keystroke without leaving the device.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">💬</div>
+      <div>
+        <h4>Chat &amp; messaging apps</h4>
+        <p>Suggest reactions or inline emoji as a user types a message, the way modern chat apps auto-complete tone.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">📝</div>
+      <div>
+        <h4>Social &amp; caption composers</h4>
+        <p>Recommend emoji for post captions and status updates while the user is still writing them.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">🤖</div>
+      <div>
+        <h4>Support &amp; chatbot UIs</h4>
+        <p>Give automated responses a quick, on-brand emoji reaction without a round trip to a moderation or NLP service.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">🗒️</div>
+      <div>
+        <h4>Notes &amp; journaling apps</h4>
+        <p>Tag entries with a mood or topic emoji automatically, useful for journal timelines and mood tracking.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">🛍️</div>
+      <div>
+        <h4>Reviews &amp; feedback forms</h4>
+        <p>Turn free-text reviews into a quick emoji sentiment tag alongside the star rating, computed on-device.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">🔔</div>
+      <div>
+        <h4>Notifications &amp; quick replies</h4>
+        <p>Offer emoji-only quick-reply chips generated from the incoming notification text.</p>
+      </div>
+    </div>
+    <div class="usecase">
+      <div class="emoji">♿</div>
+      <div>
+        <h4>Accessibility &amp; low-effort input</h4>
+        <p>Let users express a full thought with a single tap on a suggested emoji instead of typing it out.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="section-head">
+    <div class="kicker">Reference</div>
+    <h2>API at a glance</h2>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Member</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Moji(context)</code></td><td>Loads the bundled model. Implements <code>Closeable</code>.</td></tr>
+      <tr><td><code>suggestions(text, limit = 8, skinTone = null)</code></td><td>Best emoji first. Returns <code>List&lt;MojiSuggestion&gt;</code>.</td></tr>
+      <tr><td><code>MojiSuggestion(emoji, name, confidence, supportsSkinTone)</code></td><td>One ranked result.</td></tr>
+      <tr><td><code>SkinTone.LIGHT … DARK</code></td><td>Applied to people/hand emoji that support it. <code>applyTo(emoji)</code> is also public.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  <div class="foot-links">
+    <a href="https://github.com/rajumark/moji">GitHub</a>
+    <a href="https://github.com/rajumark/moji/blob/main/PUBLISHING.md">Publishing status</a>
+    <a href="https://github.com/rajumark/moji/blob/main/LICENSE">Apache-2.0 License</a>
+    <a href="https://github.com/rajumark/moji/blob/main/NOTICE">Notice</a>
+  </div>
+  <div class="copyright">© 2026 Hoverfly · Moji</div>
+</footer>
+
+</body>
+</html>
