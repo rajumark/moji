@@ -30,7 +30,7 @@ dependencyResolutionManagement {
 
 // build.gradle.kts
 dependencies {
-    implementation("com.github.rajumark:moji:v1.0.0")
+    implementation("com.github.rajumark:moji:v1.1.0")
 }
 ```
 
@@ -116,21 +116,32 @@ sample/               demo app
 
 The parity tests require identical featurizer ids and an identical top-5 to the Python reference on all 443 vectors (tasks, 22 languages and edge cases). Probabilities match to within 1e-4; the current maximum difference is 3e-6.
 
-## Updating the model
-
-The assets come from the training repo (`personal_project/moji`):
-
-```bash
-cd ../../moji
-.venv/bin/python scripts/export_kotlin.py --run runs/moji_v3
-```
-
-This rewrites `moji/src/main/assets/moji/*` and `moji/src/test/resources/testvectors.tsv`. Run the tests, then bump `VERSION_NAME`.
-
 ## Publishing
 
 See [PUBLISHING.md](PUBLISHING.md).
 
-## License
+## Pricing & license
 
-Code and model: Apache-2.0. Training-data attributions are in [NOTICE](NOTICE).
+**Free for up to 10,000 monthly active devices.** You don't need an API key, an account or a license file: add the dependency and ship. It works in commercial apps too, with no limit on how often each device runs it.
+
+| | Community | Commercial | Custom models |
+|---|---|---|---|
+| **Price** | Free | Contact us | Contact us |
+| **For** | Products with up to 10,000 monthly active devices per platform | Products above 10,000 monthly active devices on any platform | A model trained for your own language, domain or task |
+| **Includes** | Commercial use, unlimited calls, no key or sign-up | One license per product per model, direct support, early access to updates | Designed and trained by Hoverfly, shipped as a plain Kotlin library |
+
+**How devices are counted.** A monthly active device is a device that runs Moji at least once in a calendar month. The limit applies separately to each product, each platform (Android, iOS, web…) and each Hoverfly model. Once a product passes it, you have 30 days to get a commercial license. The library keeps working and never checks in with a server.
+
+**Not allowed** under any tier (unless agreed in writing):
+
+- selling or redistributing Moji or its model on its own, or inside another SDK or library
+- extracting, modifying, fine-tuning or retraining the model weights
+- using the model or its outputs to train or distill another model
+- reverse engineering the model or its file format
+- offering it as a hosted API for others
+
+**Custom models.** Hoverfly also designs and trains small, fast on-device models for your needs: moderation, classification, language detection, smart replies and more.
+
+**Contact** for a commercial license or a custom model: [raju348636@gmail.com](mailto:raju348636@gmail.com) or **+91 63533 21951** (call or WhatsApp).
+
+Full terms: [Hoverfly Community License](LICENSE). Versions 1.0.0 and earlier were released under Apache-2.0.

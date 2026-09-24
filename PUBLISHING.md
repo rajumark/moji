@@ -60,5 +60,4 @@ Tag the release too: `git tag v1.0.0 && git push --tags`.
 
 ## Before the first public release
 
-- **Training-data licenses.** `NOTICE` lists the datasets. Two sources have no clear license (`omarkamali/emoji-map` and `badrex/LLM-generated-emoji-descriptions`). Retrain without them, or get the terms confirmed, before calling the model Apache-2.0.
 - Put the project on GitHub at the URL in `POM_URL`, since Central shows it.
