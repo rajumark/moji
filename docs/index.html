@@ -313,6 +313,16 @@
   footer .foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
   footer .foot-links a { font-size: 13px; color: var(--text-secondary); }
   footer .copyright { font-size: 12px; color: var(--text-secondary); }
+
+  /* App ideas */
+  .idea-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
+  .idea {
+    display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+  }
+  .idea .emo { font-size: 22px; line-height: 1.2; flex: none; }
+  .idea p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--text-secondary); }
+  .idea p b { color: var(--text); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -328,6 +338,7 @@
       <a href="#install">Install</a>
       <a href="#usage">Usage</a>
       <a href="#use-cases">Use cases</a>
+      <a href="#ideas">Ideas</a>
       <a href="#api">API</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
@@ -582,6 +593,36 @@ moji.close()</code></pre>
         <code class="example">"जिम जाना है" → ✅ 👥 📋</code>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="ideas">
+  <div class="section-head">
+    <div class="kicker">App ideas</div>
+    <h2>20 apps you could build with Moji</h2>
+    <p>Real problems Moji solves today. Pick one and ship it.</p>
+  </div>
+  <div class="idea-list">
+    <div class="idea"><span class="emo" aria-hidden="true">⌨️</span><p><b>Keyboard emoji bar</b> · Suggest the right emoji on every keystroke in a custom keyboard.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">💬</span><p><b>Chat composer</b> · Show emoji chips above the send button that match what's being typed.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">📸</span><p><b>Caption writer</b> · Add fitting emoji to Instagram-style captions in one tap.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">👍</span><p><b>Reaction picker</b> · Suggest the best reaction for a message instead of the same six defaults.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">✅</span><p><b>To-do app icons</b> · Auto-icon tasks: "buy milk" → 🥛, "gym" → 🏋️.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">📅</span><p><b>Calendar events</b> · Auto-emoji event titles: "dentist" → 🦷, "flight to Goa" → ✈️.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">💰</span><p><b>Expense tracker</b> · Auto-tag expenses: "Uber" → 🚕, "pizza" → 🍕.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🛒</span><p><b>Shopping list</b> · Turn "apples, bread, eggs" into a scannable 🍎 🍞 🥚 list.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">📔</span><p><b>Mood journal</b> · Tag each diary entry with an emoji that matches its mood.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🏃</span><p><b>Habit tracker</b> · Give each new habit an icon automatically: "run 5k" → 🏃.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">📁</span><p><b>Folder &amp; page icons</b> · Suggest an emoji icon when users name a folder, page or playlist.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">👥</span><p><b>Group chat names</b> · Suggest an emoji for new group names like "Goa trip" → 🏖️.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">⭐</span><p><b>Review &amp; feedback forms</b> · Suggest emoji that match what the user writes in their review.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🔔</span><p><b>Notification reactions</b> · React to a message straight from the notification with the right emoji.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">📣</span><p><b>Push notification copy</b> · Add a fitting emoji to notification titles automatically.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🎧</span><p><b>Friendlier support bots</b> · Add a matching emoji to bot replies so they feel less robotic.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🍳</span><p><b>Recipe apps</b> · Show 🧅 🍅 🧄 next to ingredients for quick scanning.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🧒</span><p><b>Kids reading app</b> · Show an emoji next to new words to help children read.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">🌍</span><p><b>Flashcards</b> · Pair each vocabulary word with an emoji to make it stick, in 22+ languages.</p></div>
+    <div class="idea"><span class="emo" aria-hidden="true">♿</span><p><b>Easy expression</b> · Let users who find typing hard pick emoji that match a few words.</p></div>
   </div>
 </section>
 
