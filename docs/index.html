@@ -345,6 +345,22 @@
   .hero-demo .prompt { font-family: var(--mono); color: var(--accent); }
   .hero-demo .input-row { border: 0; border-radius: 16px; box-shadow: var(--shadow); padding: 14px 18px; }
   @media (max-width: 640px) { .hero-demo { padding: 24px 18px; border-radius: 24px; } }
+  /* Hero demo: type, the strip shimmers, emoji pop in, one tap drops the top pick into the text */
+  .hero-demo { position: relative; }
+  .hero-demo .demo-input { min-height: 1.5em; font-size: 18px; }
+  .demo-input .caret { display: inline-block; width: 2px; height: 1.1em; margin-left: 1px; vertical-align: -0.15em; background: var(--accent); animation: caret-blink 1s steps(1) infinite; }
+  .demo-input .added { display: inline-block; margin-left: .25em; animation: moji-pop .4s cubic-bezier(.2,.9,.3,1.4); }
+  .moji-strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+  .moji-strip span { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; max-height: 56px; border-radius: 14px; background: var(--card-bg); box-shadow: var(--shadow); font-size: 28px; }
+  .moji-strip span.is-loading { background: linear-gradient(90deg, #eef1ec 25%, #f9fbf6 50%, #eef1ec 75%); background-size: 300% 100%; box-shadow: none; animation: moji-shimmer 1.1s linear infinite; }
+  .moji-strip span.is-in { animation: moji-pop .4s cubic-bezier(.2,.9,.3,1.4) backwards; }
+  .moji-strip span.is-top { box-shadow: 0 0 0 3px var(--green), var(--shadow); }
+  .moji-strip span.is-tapped { transform: scale(.85); }
+  .moji-fly { position: absolute; left: 0; top: 0; z-index: 2; font-size: 28px; line-height: 1; pointer-events: none; }
+  @keyframes caret-blink { 50% { opacity: 0; } }
+  @keyframes moji-pop { from { opacity: 0; transform: scale(.3) translateY(10px); } 60% { transform: scale(1.18); } }
+  @keyframes moji-shimmer { to { background-position: -300% 0; } }
+  @media (max-width: 520px) { .moji-strip { gap: 5px; } .moji-strip span { font-size: 22px; border-radius: 10px; } }
 
   /* Buttons: 48px Material pills */
   .btn { height: 48px; padding: 0 24px; border: 0; font-size: 16px; font-weight: 500; justify-content: center; transition: box-shadow .2s, background .2s; }
@@ -478,9 +494,9 @@
   </div>
   <p class="hero-trust">Free up to 10k monthly active devices · No API key · Live on JitPack</p>
   <div class="hero-demo" id="heroDemo">
-    <div class="prompt" id="demoPrompt">moji.suggestions("Pay my bills")</div>
-    <div class="input-row" id="demoInput">Pay my bills</div>
-    <div class="emoji-row" id="demoEmojis">
+    <div class="prompt" id="demoPrompt">moji.suggestions(text)</div>
+    <div class="input-row demo-input" id="demoInput">Pay my bills 💰</div>
+    <div class="emoji-row moji-strip" id="demoEmojis">
       <span>💰</span><span>💸</span><span>🧾</span><span>🎟️</span><span>😍</span><span>💵</span><span>💳</span><span>💯</span>
     </div>
   </div>
@@ -895,7 +911,6 @@ moji.close()</code></pre>
 </script>
 
 <script>
-  // Real output from the on-device model (Pixel emulator), one example per language/use case.
   var DEMO_EXAMPLES = [
     { text: "Pay my bills", emoji: ["💰","💸","🧾","🎟️","😍","💵","💳","💯"] },
     { text: "Dentist appointment tomorrow", emoji: ["👇","🧑‍⚕️","😬","🤦","😷","👋","😂","😊"] },
@@ -909,30 +924,47 @@ moji.close()</code></pre>
     { text: "Movie night at home", emoji: ["🍿","🛋️","🎬","📺","😜","🏠","🏡","❤️"] },
   ];
 
+  // Typed like a keyboard; the suggestion strip shimmers, the real suggestions pop in, and the top one is tapped into the text.
   (function () {
-    var demo = document.getElementById("heroDemo");
-    var promptEl = document.getElementById("demoPrompt");
-    var inputEl = document.getElementById("demoInput");
-    var emojiEl = document.getElementById("demoEmojis");
-    if (!demo || !promptEl || !inputEl || !emojiEl) return;
+    var demo = document.getElementById("heroDemo"), input = document.getElementById("demoInput"), strip = document.getElementById("demoEmojis");
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    function sleep(ms) { return new Promise(function (r) { window.setTimeout(r, ms); }); }
+    function el(tag, cls, t) { var e = document.createElement(tag); if (cls) e.className = cls; if (t != null) e.textContent = t; return e; }
+    async function play(ex) {
+      input.textContent = ""; strip.innerHTML = "";
+      var slots = [];
+      for (var s = 0; s < 8; s++) { var sl = el("span", "is-loading"); strip.appendChild(sl); slots.push(sl); }
+      var typed = document.createTextNode(""), caret = el("span", "caret");
+      input.appendChild(typed); input.appendChild(caret);
+      var chars = Array.from(ex.text);
+      for (var i = 0; i < chars.length; i++) { typed.data += chars[i]; await sleep(chars[i] === " " ? 80 : 45 + Math.random() * 45); }
+      await sleep(300);
 
-    var i = 0;
-    function render(example) {
-      promptEl.textContent = 'moji.suggestions("' + example.text + '")';
-      inputEl.textContent = example.text;
-      emojiEl.innerHTML = example.emoji.map(function (e) { return "<span>" + e + "</span>"; }).join("");
+      slots.forEach(function (sl, k) { sl.className = "is-in"; sl.style.animationDelay = (k * 70) + "ms"; sl.textContent = ex.emoji[k]; });
+      await sleep(8 * 70 + 500);
+      slots[0].classList.add("is-top");
+      await sleep(700);
+
+      // Tap the top suggestion; a copy flies from the strip to the caret.
+      slots[0].classList.add("is-tapped");
+      await sleep(140); slots[0].classList.remove("is-tapped");
+      var d = demo.getBoundingClientRect(), a = slots[0].getBoundingClientRect(), b = caret.getBoundingClientRect();
+      var fly = el("span", "moji-fly", ex.emoji[0]);
+      demo.appendChild(fly);
+      var x0 = a.left - d.left + a.width / 2 - 14, y0 = a.top - d.top + a.height / 2 - 14;
+      var x1 = b.left - d.left + 4, y1 = b.top - d.top - 4;
+      await fly.animate([
+        { transform: "translate(" + x0 + "px," + y0 + "px) scale(1)" },
+        { transform: "translate(" + ((x0 + x1) / 2) + "px," + (Math.min(y0, y1) - 40) + "px) scale(1.3)", offset: .5 },
+        { transform: "translate(" + x1 + "px," + y1 + "px) scale(.8)" }
+      ], { duration: 650, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }).finished;
+      fly.remove();
+      input.insertBefore(el("span", "added", ex.emoji[0]), caret);
+      await sleep(2600);
+      demo.classList.add("is-fading"); await sleep(380);
+      demo.classList.remove("is-fading");
     }
-
-    function next() {
-      demo.classList.add("is-fading");
-      window.setTimeout(function () {
-        i = (i + 1) % DEMO_EXAMPLES.length;
-        render(DEMO_EXAMPLES[i]);
-        demo.classList.remove("is-fading");
-      }, 350);
-    }
-
-    window.setInterval(next, 8000);
+    (async function loop() { var i = 0; for (;;) { await play(DEMO_EXAMPLES[i]); i = (i + 1) % DEMO_EXAMPLES.length; } })();
   })();
 </script>
 
