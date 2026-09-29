@@ -1,63 +1,42 @@
 # Publishing Moji
 
-Publishing uses the [vanniktech maven-publish plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/). It uploads to the Maven Central Portal and produces the AAR, sources jar, Dokka javadoc jar, POM and signatures.
+Publishing uses the [vanniktech maven-publish plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/). One upload to the Maven Central Portal contains every platform: the root `moji` module plus `moji-android`, `moji-jvm`, `moji-iosarm64`, `moji-iossimulatorarm64`, `moji-macosarm64`, `moji-js` and `moji-wasm-js`, each with sources, javadoc, POM and signatures.
 
-## Status (2026-09-23)
+Coordinates and POM data are in `gradle.properties` (`GROUP`, `POM_ARTIFACT_ID`, `VERSION_NAME`, `POM_*`).
 
-- **JitPack: live.** `com.github.rajumark:moji:v1.0.0` is published and resolvable — see the README's Install section.
-- **Maven Central: blocked.** The upload validated and was rejected with `Namespace 'io.github.rajumark' is not allowed` (deployment id `0ff5fe17-d014-4892-9b6f-ba97d55c165b`). The Central Portal account currently signed in doesn't own the verified `io.github.rajumark` namespace, even though it's the same GitHub identity (`rajumark`) — looks like a duplicate-account issue on Sonatype's side. Emailed `central-support@sonatype.com` to ask them to identify/merge the account that owns the namespace. Once that's resolved, re-run `./gradlew publishAndReleaseToMavenCentral` — everything else (signing, tests, sample build against the artifact) already passed.
+## Secrets
 
-## One-time setup (about an hour)
+Put these in `~/.gradle/gradle.properties`, never in the repo:
 
-1. **Maven Central account.** Sign in at https://central.sonatype.com with the GitHub account `rajumark`. The namespace `io.github.rajumark` is verified automatically; check that it shows as *Verified* under Namespaces.
-2. **Coordinates** are already set in `gradle.properties`: `io.github.rajumark:moji`, package `io.github.rajumark.hoverfly.moji`, repo `github.com/rajumark/moji`. Create that GitHub repo and push this project, because Central shows the POM links.
-3. **User token.** Central Portal → Account → *Generate User Token*.
-4. **GPG key** for signing:
-   ```bash
-   brew install gnupg
-   gpg --full-generate-key                      # RSA 4096, no expiry is fine
-   gpg --list-secret-keys --keyid-format SHORT  # note the 8-char key id
-   gpg --keyserver keyserver.ubuntu.com --send-keys <KEY_ID>
-   gpg --armor --export-secret-keys <KEY_ID> > /tmp/moji-signing.asc
-   ```
-5. **Secrets.** Put these in `~/.gradle/gradle.properties`, never in the repo:
-   ```properties
-   mavenCentralUsername=<token username>
-   mavenCentralPassword=<token password>
-   signingInMemoryKey=<contents of moji-signing.asc, newlines replaced by \n>
-   signingInMemoryKeyPassword=<gpg passphrase>
-   ```
-   One way to produce the single-line key:
-   ```bash
-   awk 'NR>1{printf "\\n"} {printf "%s",$0}' /tmp/moji-signing.asc
-   ```
-   Then delete `/tmp/moji-signing.asc`.
+```properties
+mavenCentralUsername=<Central Portal user token username>
+mavenCentralPassword=<Central Portal user token password>
+signingInMemoryKey=<ASCII-armored GPG private key, newlines replaced by \n>
+signingInMemoryKeyPassword=<gpg passphrase>
+```
 
-   In CI, use environment variables instead: `ORG_GRADLE_PROJECT_mavenCentralUsername`, `ORG_GRADLE_PROJECT_mavenCentralPassword`, `ORG_GRADLE_PROJECT_signingInMemoryKey`, `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword`.
+The namespace `io.github.rajumark` must show as *Verified* at https://central.sonatype.com (Namespaces), and the GPG public key must be on keys.openpgp.org or keyserver.ubuntu.com.
 
 ## Every release
 
+A Mac is needed, because the Apple targets only build on macOS.
+
 ```bash
-# 1. bump the version in gradle.properties (VERSION_NAME) and add a CHANGELOG entry
+# 1. bump VERSION_NAME in gradle.properties (and MOJI_VERSION / libs.versions.toml in sample/), add a CHANGELOG entry
 
-# 2. tests: JVM parity + a device run
-./gradlew :moji:testDebugUnitTest
-./gradlew :moji:connectedDebugAndroidTest          # with a device or emulator attached
+# 2. library tests on every platform (emulator attached for the device test)
+./gradlew :moji:jvmTest :moji:testAndroidHostTest :moji:connectedAndroidDeviceTest \
+  :moji:iosSimulatorArm64Test :moji:macosArm64Test \
+  :moji:jsNodeTest :moji:jsBrowserTest :moji:wasmJsNodeTest :moji:wasmJsBrowserTest
 
-# 3. dry run: publish to ~/.m2 and build the sample against that artifact
+# 3. dry run: publish to ~/.m2 and run the sample apps against it (see README)
 ./gradlew :moji:publishToMavenLocal
-./gradlew :sample:assembleRelease -PuseMavenLocal
 
 # 4. upload, then check the deployment at https://central.sonatype.com/publishing and press "Publish"
 ./gradlew :moji:publishToMavenCentral
-#    or upload and release in one step:
-./gradlew :moji:publishAndReleaseToMavenCentral
+
+# 5. once live (10–30 min), run the sample against Maven Central
+cd sample && ./gradlew :androidApp:assembleRelease :desktopApp:run -PmojiRepo=central
 ```
 
-It usually takes 10–30 minutes after release for `implementation("io.github.rajumark:moji:<version>")` to resolve.
-
-Tag the release too: `git tag v1.0.0 && git push --tags`.
-
-## Before the first public release
-
-- Put the project on GitHub at the URL in `POM_URL`, since Central shows it.
+Tag the release too: `git tag v2.0.0 && git push --tags`.

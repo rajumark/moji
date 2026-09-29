@@ -1,38 +1,41 @@
 # Moji 🙂
 
-By Hoverfly. On-device emoji suggestions for Android. You give it a task or a message and get back the emoji that fit, in 22+ languages.
+By Hoverfly. On-device emoji suggestions for **Kotlin Multiplatform**: Android, iOS, macOS, JVM desktop, JavaScript and WebAssembly. You give it a task or a message and get back the emoji that fit, in 22+ languages.
 
 ```kotlin
 import io.github.rajumark.hoverfly.moji.Moji
 
-Moji(context).use { moji ->
+Moji().use { moji ->
     moji.suggestions("Pay my bills")   // 💰 💸 🧾 💵 💳 …
 }
 ```
 
-- **No dependencies.** Inference is plain Kotlin. There is no ONNX Runtime, TFLite or native code, so the library adds about 5 MB to an APK.
-- **Private and offline.** The model ships inside the AAR. There is no network, no permission and no telemetry.
-- **Fast.** About 0.5 ms per suggestion once warm (emulator on Apple silicon) and about 2 ms on a mid-range phone (Moto G57 Power).
-- **minSdk 21.** Works from Kotlin and Java.
+- **No dependencies.** Inference is plain Kotlin in common code. There is no ONNX Runtime, TFLite or native code, and the library adds about 5 MB to an app.
+- **Private and offline.** The model ships inside the library on every platform. There is no network, no permission and no telemetry.
+- **Fast.** About 0.3–0.6 ms per suggestion once warm on JVM, Android, JS and Wasm, and about 2 ms on a mid-range Android phone (Moto G57 Power).
+- **Identical everywhere.** Every platform is tested against the Python reference model on 443 vectors and gets the same top-5 emoji.
 
 ## Install
 
-Available via [JitPack](https://jitpack.io/#rajumark/moji):
-
 ```kotlin
-// settings.gradle.kts
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-    }
-}
-
-// build.gradle.kts
+// build.gradle.kts: commonMain, or any platform source set
 dependencies {
-    implementation("com.github.rajumark:moji:v1.1.0")
+    implementation("io.github.rajumark:moji:2.0.0")
 }
 ```
+
+It's on Maven Central, so no extra repository is needed. Gradle picks the right artifact for each platform:
+
+| Platform | Artifact |
+|---|---|
+| Android (minSdk 21) | `moji-android` |
+| JVM desktop (Java 8+) | `moji-jvm` |
+| iOS device and simulator (arm64) | `moji-iosarm64`, `moji-iossimulatorarm64` |
+| macOS (arm64) | `moji-macosarm64` |
+| JavaScript (browser, Node) | `moji-js` |
+| WebAssembly (browser, Node) | `moji-wasm-js` |
+
+The Android-only 1.x releases are `io.github.rajumark:moji:1.1.0` and, on JitPack, `com.github.rajumark:moji:v1.1.0`.
 
 ## Screenshots
 
@@ -43,13 +46,19 @@ Same model, same device, three languages — suggestions run entirely on-device,
 | ![Hindi example](docs/screenshots/moji-hindi.png) | ![Spanish example](docs/screenshots/moji-spanish.png) | ![French example](docs/screenshots/moji-french.png) |
 | "जिम जाना है" | "Partido de fútbol esta noche" | "Réserver un vol pour Paris" |
 
+The KMP sample on each platform:
+
+| Android | iOS | Desktop | Web (Wasm) |
+|---|---|---|---|
+| ![Android](screenshots/android/1-pay-my-bills.png) | ![iOS](screenshots/ios/1-pay-my-bills.png) | ![Desktop](screenshots/desktop/1-pay-my-bills.png) | ![Web](screenshots/web-wasm/1-pay-my-bills.png) |
+
 ## Use
 
 ```kotlin
 import io.github.rajumark.hoverfly.moji.Moji
 import io.github.rajumark.hoverfly.moji.SkinTone
 
-val moji = Moji(context)               // loads the model: ~50–200 ms, do it off the main thread, keep one instance
+val moji = Moji()                      // loads the model: tens of ms, do it off the main thread, keep one instance
 
 val top = moji.suggestions("Pay my bills")
 top.first().emoji                      // "💰"
@@ -58,7 +67,7 @@ top.first().confidence                 // 0.36
 
 moji.suggestions("Great job thumbs up", limit = 5, skinTone = SkinTone.MEDIUM)   // 👍🏽 👏🏽 …
 
-moji.close()                           // frees the model's heap memory
+moji.close()                           // frees the model's memory
 ```
 
 `suggestions()` is thread-safe and fast enough to call on every keystroke.
@@ -66,55 +75,70 @@ moji.close()                           // frees the model's heap memory
 With coroutines:
 
 ```kotlin
-val moji = withContext(Dispatchers.Default) { Moji(context) }
+val moji = withContext(Dispatchers.Default) { Moji() }
 ```
 
 From Java:
 
 ```java
-try (Moji moji = new Moji(context)) {
+try (Moji moji = new Moji()) {
     List<MojiSuggestion> s = moji.suggestions("Pay my bills");
 }
 ```
+
+Upgrading from 1.x on Android: `Moji(context)` still compiles in Kotlin (deprecated). The model no longer needs a `Context`, so switch to `Moji()`. Java code must change `new Moji(context)` to `new Moji()`.
 
 ### API
 
 | | |
 |---|---|
-| `Moji(context)` | Loads the bundled model. `Closeable`. |
+| `Moji()` | Loads the bundled model. `AutoCloseable`. |
 | `suggestions(text, limit = 8, skinTone = null)` | The best emoji first. Returns `List<MojiSuggestion>`. |
 | `MojiSuggestion(emoji, name, confidence, supportsSkinTone)` | One result. |
 | `SkinTone.LIGHT … DARK` | Applied to the people and hand emoji that support it. `applyTo(emoji)` is also public. |
 
-## Sample app
+## Sample apps
 
-`sample/` is a Jetpack Compose (Material 3) demo: live suggestions as you type, tap-to-insert, skin tones and a confidence view.
+`sample/` is a separate Gradle build that uses the **published** library, never the source. It resolves `io.github.rajumark` only from Maven Local, or from Maven Central with `-PmojiRepo=central`. It has a Compose Multiplatform app for Android, desktop and iOS, and a web page built for both Kotlin/JS and Kotlin/Wasm.
 
 ```bash
-./gradlew :sample:installDebug
+./gradlew :moji:publishToMavenLocal
+cd sample
+./gradlew :androidApp:installRelease
+./gradlew :desktopApp:run
+./gradlew :webApp:wasmJsBrowserDevelopmentRun     # or :webApp:jsBrowserDevelopmentRun
+open iosApp/iosApp.xcodeproj                       # run the iosApp scheme on a simulator
 ```
 
 ## Project layout
 
 ```
-moji/                 the library (AAR)
-  src/main/assets/moji/   moji.bin (int8 weights) · spm_pieces.tsv (tokenizer) · vocab.tsv (1000 emoji)
-  src/main/kotlin/io/github/rajumark/hoverfly/moji/          public API: Moji, MojiSuggestion, SkinTone
-  src/main/kotlin/io/github/rajumark/hoverfly/moji/internal/ Featurizer, SentencePiece, Network (the model in plain Kotlin)
-  src/test/           JVM tests: parity with Python on 443 vectors, API, latency
-  src/androidTest/    the same parity check on a real device (Android ICU)
-sample/               demo app
+moji/                          the library
+  src/commonMain/              public API (Moji, MojiSuggestion, SkinTone) and the model in plain Kotlin
+                               (internal/: Featurizer, SentencePiece, Network, UnicodeTables)
+  src/{jvm,android,apple,js,wasmJs}Main/   the only platform code: NFKC normalization + model loading
+  src/modelData/               moji.bin (int8 weights) · spm_pieces.tsv (tokenizer) · vocab.tsv (1000 emoji)
+  src/commonTest/              parity with Python on 443 vectors, API, latency; runs on every target
+sample/                        demo apps using the published artifacts
+scripts/GenTables.java         generates UnicodeTables.kt (character classes) so every platform agrees
+docs/                          website (rajumark.github.io/moji)
 ```
+
+On JVM and Android the model ships as Java resources in the jar/AAR. Kotlin/Native and the web have no resources, so the build compiles it into the library (`generateEmbeddedModel`).
 
 ## Tests
 
 ```bash
-./gradlew :moji:testDebugUnitTest                        # JVM: parity + API
-./gradlew :moji:connectedDebugAndroidTest                # on a connected device/emulator
-./gradlew :moji:connectedReleaseAndroidTest -PtestBuildType=release   # realistic device latency
+./gradlew :moji:jvmTest
+./gradlew :moji:testAndroidHostTest
+./gradlew :moji:connectedAndroidDeviceTest              # on a connected device/emulator
+./gradlew :moji:iosSimulatorArm64Test
+./gradlew :moji:macosArm64Test
+./gradlew :moji:jsNodeTest :moji:jsBrowserTest
+./gradlew :moji:wasmJsNodeTest :moji:wasmJsBrowserTest
 ```
 
-The parity tests require identical featurizer ids and an identical top-5 to the Python reference on all 443 vectors (tasks, 22 languages and edge cases). Probabilities match to within 1e-4; the current maximum difference is 3e-6.
+The parity tests require identical featurizer ids and an identical top-5 to the Python reference on all 443 vectors (tasks, 22 languages and edge cases), on every target. Probabilities match to within 1e-4; the current maximum difference is 3e-6.
 
 ## Publishing
 
