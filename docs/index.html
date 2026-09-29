@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Moji — on-device emoji suggestions for Android</title>
+<title>Moji — on-device emoji suggestions for Kotlin Multiplatform</title>
 <meta name="description" content="Moji suggests the right emoji for any text in under a millisecond, entirely on-device — no server call, no dependencies, ~5 MB, 22+ languages. Free for up to 10,000 monthly active devices.">
 <meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
@@ -487,12 +487,12 @@
 <header class="hero">
   <div class="eyebrow">Moji · by Hoverfly</div>
   <h1>The right emoji,<br>every keystroke.</h1>
-  <p class="tagline">Turn any text into ranked emoji suggestions in about half a millisecond — computed on the phone, with nothing sent to a server. Drop it into a keyboard, chat, or composer in three lines of Kotlin.</p>
+  <p class="tagline">Turn any text into ranked emoji suggestions in about half a millisecond — computed on the device (Android, iOS, desktop or the web), with nothing sent to a server. Drop it into a keyboard, chat, or composer in three lines of Kotlin.</p>
   <div class="hero-actions">
     <a class="btn btn-primary" href="#install">Get started</a>
     <a class="btn btn-secondary" href="https://github.com/rajumark/moji">View source</a>
   </div>
-  <p class="hero-trust">Free up to 10k monthly active devices · No API key · Live on JitPack</p>
+  <p class="hero-trust">Free up to 10k monthly active devices · No API key · On Maven Central · Android, iOS, desktop, web</p>
   <div class="hero-demo" id="heroDemo">
     <div class="prompt" id="demoPrompt">moji.suggestions(text)</div>
     <div class="input-row demo-input" id="demoInput">Pay my bills 💰</div>
@@ -517,7 +517,7 @@
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
       <h3>Private &amp; offline</h3>
-      <p>The model ships inside the AAR. No network calls, no permissions, no telemetry — one less thing to explain in your privacy policy.</p>
+      <p>The model ships inside the library on every platform. No network calls, no permissions, no telemetry — one less thing to explain in your privacy policy.</p>
     </div>
     <div class="card">
       <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6l1-8Z"/></svg></span>
@@ -539,7 +539,7 @@
     <div class="stat-card">
       <div class="stat-value">~5MB</div>
       <div class="stat-label">On-device</div>
-      <div class="stat-note">model + tokenizer, in the AAR</div>
+      <div class="stat-note">model + tokenizer, inside the library</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">22+</div>
@@ -581,46 +581,52 @@
       </div>
     </div>
   </div>
+  <div class="section-head" style="margin-top: 48px;">
+    <h2>Same library on every platform</h2>
+    <p>The Kotlin Multiplatform sample app, built from the published artifacts, gives the same result on Android, iOS, desktop and the web.</p>
+  </div>
+  <div class="grid">
+    <div class="card shot"><img src="screenshots/kmp-android.png" alt="Moji sample on Android" loading="lazy"><div class="shot-caption"><h3>Android</h3><p>Pay my bills → 💰 36% · 💸 31%</p></div></div>
+    <div class="card shot"><img src="screenshots/kmp-ios.png" alt="Moji sample on iOS" loading="lazy"><div class="shot-caption"><h3>iOS</h3><p>Pay my bills → 💰 36% · 💸 31%</p></div></div>
+    <div class="card shot"><img src="screenshots/kmp-desktop.png" alt="Moji sample on Desktop (JVM)" loading="lazy"><div class="shot-caption"><h3>Desktop (JVM)</h3><p>Pay my bills → 💰 36% · 💸 31%</p></div></div>
+    <div class="card shot"><img src="screenshots/kmp-web-wasm.png" alt="Moji sample on Web (Wasm)" loading="lazy"><div class="shot-caption"><h3>Web (Wasm)</h3><p>Pay my bills → 💰 36% · 💸 31%</p></div></div>
+  </div>
 </section>
 
 <section id="install">
   <div class="section-head">
     <div class="kicker">Install</div>
     <h2>Add it to your build</h2>
-    <p>One line in your Gradle file. Available now via JitPack — no waitlist, no API key.</p>
+    <p>One line in your Gradle file, from Maven Central. Works in commonMain for Android, iOS, macOS, JVM desktop, JavaScript and WebAssembly. No waitlist, no API key.</p>
   </div>
 
   <div class="code-block">
-    <div class="code-label">JitPack <span class="tag-pill live">live</span></div>
+    <div class="code-label">Maven Central <span class="tag-pill live">live</span></div>
     <button class="copy-btn" type="button">Copy</button>
-    <pre><code class="language-kotlin">// settings.gradle.kts
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-    }
+    <pre><code class="language-kotlin">// build.gradle.kts: commonMain, or any platform source set
+dependencies {
+    implementation("io.github.rajumark:moji:2.0.0")
 }
 
-// build.gradle.kts
-dependencies {
-    implementation("com.github.rajumark:moji:v1.1.0")
-}</code></pre>
+// Gradle picks the right artifact per platform:
+// moji-android · moji-jvm · moji-iosarm64 · moji-iossimulatorarm64
+// moji-macosarm64 · moji-js · moji-wasm-js</code></pre>
   </div>
 
   <div class="prompt-block">
     <div class="code-label">Build with a prompt</div>
     <div class="code-block">
       <button class="copy-btn" type="button">Copy</button>
-      <pre><code>Add Moji from rajumark to this Android project (Kotlin).
+      <pre><code>Add Moji from rajumark to this Kotlin Multiplatform or Android project.
 
 What it does: on-device emoji suggestions from text, in 22+ languages, ~5 MB, no dependencies, no network.
 
-Install (JitPack):
-  settings.gradle.kts: add maven { url = uri("https://jitpack.io") } to repositories
-  build.gradle.kts: implementation("com.github.rajumark:moji:v1.1.0")
+Install (Maven Central, no extra repository):
+  build.gradle.kts (commonMain or any source set): implementation("io.github.rajumark:moji:2.0.0")
+  Platforms: Android, iOS, macOS, JVM desktop, JavaScript, WebAssembly
 
 Usage:
-  val moji = Moji(context)
+  val moji = Moji()
   val top = moji.suggestions("Pay my bills").first()
   top.emoji
 
@@ -641,7 +647,7 @@ Add the dependency, then follow the README for the exact API and current version
     <div class="code-block">
       <div class="code-label">Kotlin</div>
       <button class="copy-btn" type="button">Copy</button>
-      <pre><code class="language-kotlin">val moji = Moji(context)
+      <pre><code class="language-kotlin">val moji = Moji()
 
 val top = moji.suggestions("Pay my bills").first()
 top.emoji   // "💰"
@@ -651,7 +657,7 @@ moji.close()</code></pre>
     <div class="code-block">
       <div class="code-label">Java</div>
       <button class="copy-btn" type="button">Copy</button>
-      <pre><code class="language-java">try (Moji moji = new Moji(context)) {
+      <pre><code class="language-java">try (Moji moji = new Moji()) {
     List&lt;MojiSuggestion&gt; s =
         moji.suggestions("Pay my bills");
 }</code></pre>
@@ -773,7 +779,7 @@ moji.close()</code></pre>
       <tr><th>Member</th><th>Description</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>Moji(context)</code></td><td>Loads the bundled model. Implements <code>Closeable</code>.</td></tr>
+      <tr><td><code>Moji()</code></td><td>Loads the bundled model. Implements <code>AutoCloseable</code>.</td></tr>
       <tr><td><code>suggestions(text, limit = 8, skinTone = null)</code></td><td>Best emoji first. Returns <code>List&lt;MojiSuggestion&gt;</code>.</td></tr>
       <tr><td><code>MojiSuggestion(emoji, name, confidence, supportsSkinTone)</code></td><td>One ranked result.</td></tr>
       <tr><td><code>SkinTone.LIGHT … DARK</code></td><td>Applied to people/hand emoji that support it. <code>applyTo(emoji)</code> is also public.</td></tr>
@@ -853,7 +859,7 @@ moji.close()</code></pre>
   </div>
   <div class="faq-item">
     <h4>What is Moji?</h4>
-    <p>An Android library: give it a task or a message and it returns the emoji that fit, ranked by confidence, in 22+ languages.</p>
+    <p>A Kotlin Multiplatform library (Android, iOS, macOS, JVM desktop, JavaScript, WebAssembly): give it a task or a message and it returns the emoji that fit, ranked by confidence, in 22+ languages.</p>
   </div>
   <div class="faq-item">
     <h4>Does Moji run on device?</h4>
@@ -861,7 +867,7 @@ moji.close()</code></pre>
   </div>
   <div class="faq-item">
     <h4>Which platforms does Moji support?</h4>
-    <p>Android, minSdk 21, from both Kotlin and Java.</p>
+    <p>Android (minSdk 21), iOS (device and simulator, arm64), macOS (arm64), JVM desktop, JavaScript and WebAssembly, from Kotlin, and from Java on Android and the JVM. Every platform gives the same results.</p>
   </div>
   <div class="faq-item">
     <h4>How accurate is it?</h4>
