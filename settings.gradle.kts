@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "moji-kmp"
 include(":moji")
+include(":demo")

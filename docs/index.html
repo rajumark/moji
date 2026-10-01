@@ -597,6 +597,50 @@
   .nav-switch-menu a[aria-current] { box-shadow: inset 0 0 0 2px #3ddc84; }
   .nav-switch-menu a.all { justify-content: center; margin-top: 6px; border-top: 1px solid var(--border); border-radius: 0 0 12px 12px; padding-top: 12px; font-weight: 500; color: var(--accent) !important; }
   @media (max-width: 520px) { .nav-switch-menu { position: fixed; top: 64px; left: 16px; right: 16px; width: auto; max-width: none; } }
+
+  /* Live demo: the real library (Kotlin/Wasm) in a Web Worker. A div, not a section, so the section bands below keep their colours. */
+  .live { padding: 72px 22px; background: var(--accent); box-shadow: 0 0 0 100vmax var(--accent); clip-path: inset(0 -100vmax); }
+  .live-inner { max-width: 980px; margin: 0 auto; }
+  .live .section-head { margin-bottom: 36px; }
+  .live .section-head .kicker { color: var(--green); display: inline-flex; align-items: center; gap: 8px; }
+  .live .section-head .kicker::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(61, 220, 132, .25); }
+  .live .section-head h2 { color: #fff; }
+  .live .section-head p { color: rgba(255, 255, 255, .78); }
+  .live-card { max-width: 760px; margin: 0 auto; background: var(--card-bg); border-radius: 28px; padding: 28px; box-shadow: 0 12px 40px rgba(0, 0, 0, .25); }
+  .live-status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); background: var(--bg-subtle); border-radius: 980px; padding: 6px 12px 6px 10px; margin-bottom: 16px; }
+  .live-status .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--accent); animation: live-spin .8s linear infinite; flex: none; }
+  .live-status[data-state="ready"] { background: var(--green-soft); color: var(--green-ink); }
+  .live-status[data-state="ready"] .dot { border: 0; background: #1e8e3e; animation: none; width: 8px; height: 8px; margin: 0 3px; }
+  .live-status[data-state="error"] { background: #fce8e6; color: #a50e0e; }
+  .live-status[data-state="error"] .dot { border: 0; background: #d93025; animation: none; width: 8px; height: 8px; margin: 0 3px; }
+  @keyframes live-spin { to { transform: rotate(360deg); } }
+  .live-input { display: block; width: 100%; font: inherit; font-size: 20px; color: var(--text-strong); padding: 14px 18px; border: 2px solid var(--border); border-radius: 16px; background: var(--bg); outline: none; transition: border-color .15s; }
+  .live-input:focus { border-color: var(--accent); }
+  .live-examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 20px; }
+  .live-examples button, .live-tones button { font: inherit; font-size: 13px; color: var(--text); background: var(--bg-subtle); border: 1px solid transparent; border-radius: 980px; padding: 5px 12px; cursor: pointer; }
+  .live-examples button:hover, .live-tones button:hover { border-color: var(--border); background: var(--tonal-hover); }
+  .live-results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .live-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px 14px; border: 1px solid var(--border); border-radius: 16px; background: var(--card-bg); cursor: pointer; font: inherit; color: inherit; overflow: hidden; min-width: 0; }
+  .live-tile:hover { box-shadow: var(--shadow); }
+  .live-tile.is-top { border-color: var(--green); box-shadow: 0 0 0 2px var(--green); }
+  .live-tile .e { font-size: 34px; line-height: 1.2; }
+  .live-tile .n { font-size: 12px; color: var(--text-secondary); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .live-tile .c { font-size: 13px; font-weight: 600; color: var(--text-strong); font-variant-numeric: tabular-nums; }
+  .live-tile .bar { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--green); transition: width .2s; }
+  .live-tile.is-loading { cursor: default; border-color: transparent; background: linear-gradient(90deg, #eef1ec 25%, #f9fbf6 50%, #eef1ec 75%); background-size: 300% 100%; animation: moji-shimmer 1.1s linear infinite; min-height: 96px; }
+  .live-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; font-size: 13px; color: var(--text-secondary); }
+  .live-tones { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .live-tones button { font-size: 16px; padding: 3px 8px; }
+  .live-tones button[aria-pressed="true"] { border-color: var(--accent); background: var(--bg); }
+  .live-meta { font-variant-numeric: tabular-nums; }
+  .live-toast { position: fixed; left: 16px; bottom: 16px; z-index: 120; display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 980px; background: var(--accent); color: #fff !important; font-size: 13px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .18), 0 4px 16px rgba(0, 0, 0, .2); transition: opacity .4s, transform .4s; }
+  .live-toast .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .3); border-top-color: var(--green); animation: live-spin .8s linear infinite; }
+  .live-toast.is-ready .dot { border: 0; background: var(--green); animation: none; width: 8px; height: 8px; margin: 0 3px; }
+  .live-toast.is-hidden { opacity: 0; transform: translateY(12px); pointer-events: none; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 720px) { .live { padding: 56px 16px; } .live-card { padding: 18px; border-radius: 22px; } .live-input { font-size: 18px; } }
+  @media (max-width: 520px) { .live-results { gap: 6px; } .live-tile { padding: 10px 4px 12px; border-radius: 12px; } .live-tile .e { font-size: 28px; } .live-tile .n { font-size: 11px; } }
+  @media (prefers-reduced-motion: reduce) { .live-status .dot, .live-toast .dot, .live-tile.is-loading { animation: none; } }
 </style>
 </head>
 <body>
@@ -627,6 +671,7 @@
       </details>
     </div>
     <div class="nav-links">
+      <a href="#live-demo">Live demo</a>
       <a href="#screenshots">Screenshots</a>
       <a href="#install">Install</a>
       <a href="#usage">Usage</a>
@@ -657,6 +702,43 @@
     </div>
   </div>
 </header>
+
+<div class="live" id="live-demo" role="region" aria-labelledby="live-title">
+  <div class="live-inner">
+    <div class="section-head">
+      <div class="kicker">Live demo</div>
+      <h2 id="live-title">Try the real model, right here</h2>
+      <p>This is the actual Moji library, compiled to WebAssembly and running in your browser. Type anything, in any language. Your text never leaves this page.</p>
+    </div>
+    <div class="live-card">
+      <div class="live-status" id="liveStatus" data-state="loading" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="liveStatusText">Loading the model (~5 MB)…</span></div>
+      <label class="visually-hidden" for="liveInput">Text to suggest emoji for</label>
+      <input class="live-input" id="liveInput" type="text" value="Pay my bills" maxlength="200" autocomplete="off" spellcheck="false" placeholder="Type a message…">
+      <div class="live-examples" id="liveExamples" aria-label="Examples">
+        <button type="button">Pay my bills</button>
+        <button type="button">Happy birthday!</button>
+        <button type="button">Walk the dog</button>
+        <button type="button">Gym at 6am</button>
+        <button type="button">Feliz cumpleaños</button>
+        <button type="button">犬の散歩</button>
+        <button type="button">जिम जाना है</button>
+      </div>
+      <div class="live-results" id="liveResults" aria-live="polite"></div>
+      <div class="live-foot">
+        <div class="live-tones" id="liveTones" aria-label="Skin tone">
+          <span>Skin tone</span>
+          <button type="button" data-tone="" aria-pressed="true" title="Default">👋</button>
+          <button type="button" data-tone="LIGHT" aria-pressed="false" title="Light">👋🏻</button>
+          <button type="button" data-tone="MEDIUM_LIGHT" aria-pressed="false" title="Medium-light">👋🏼</button>
+          <button type="button" data-tone="MEDIUM" aria-pressed="false" title="Medium">👋🏽</button>
+          <button type="button" data-tone="MEDIUM_DARK" aria-pressed="false" title="Medium-dark">👋🏾</button>
+          <button type="button" data-tone="DARK" aria-pressed="false" title="Dark">👋🏿</button>
+        </div>
+        <div class="live-meta" id="liveMeta">Tap an emoji to add it to the text</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section id="features">
   <div class="section-head">
@@ -1246,5 +1328,115 @@ moji.close()</code></pre>
   });
 })();
 </script>
+
+<a class="live-toast is-hidden" id="liveToast" href="#live-demo"><span class="dot" aria-hidden="true"></span><span id="liveToastText">Loading the live demo model…</span></a>
+<script>
+  // Live demo: the page loads first, then the model loads quietly in a Web Worker (demo/worker.js).
+  (function () {
+    var LIMIT = 8;
+    var input = document.getElementById("liveInput");
+    var results = document.getElementById("liveResults");
+    var status = document.getElementById("liveStatus");
+    var statusText = document.getElementById("liveStatusText");
+    var meta = document.getElementById("liveMeta");
+    var toast = document.getElementById("liveToast");
+    var toastText = document.getElementById("liveToastText");
+    var worker = null, ready = false, nextId = 0, lastId = -1, tone = "", t0 = 0;
+
+    function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    function fmtMs(ms) { return ms < 1 ? ms.toFixed(2) + " ms" : ms < 10 ? ms.toFixed(1) + " ms" : Math.round(ms) + " ms"; }
+
+    function showLoading() {
+      var html = "";
+      for (var i = 0; i < LIMIT; i++) html += '<div class="live-tile is-loading" aria-hidden="true"></div>';
+      results.innerHTML = html;
+    }
+
+    function render(list) {
+      var top = list.length ? list[0].confidence : 1;
+      results.innerHTML = list.map(function (s, i) {
+        var pct = s.confidence * 100;
+        return '<button type="button" class="live-tile' + (i === 0 ? " is-top" : "") + '" data-emoji="' + esc(s.emoji) + '" title="' + esc(s.name) + '" aria-label="' + esc(s.name) + ", " + pct.toFixed(1) + '%">' +
+          '<span class="e">' + s.emoji + '</span><span class="n">' + esc(s.name) + '</span>' +
+          '<span class="c">' + (pct < 1 ? pct.toFixed(1) : Math.round(pct)) + '%</span>' +
+          '<span class="bar" style="width:' + (s.confidence / top * 100).toFixed(1) + '%"></span></button>';
+      }).join("");
+    }
+
+    function run() {
+      if (!ready) return;
+      lastId = nextId++;
+      worker.postMessage({ id: lastId, text: input.value, limit: LIMIT, tone: tone });
+    }
+
+    function setStatus(state, text) {
+      status.setAttribute("data-state", state);
+      statusText.textContent = text;
+    }
+
+    function fail(message) {
+      setStatus("error", "The live demo can't run in this browser. It needs WebAssembly GC (Chrome 119+, Firefox 120+, Safari 18.2+).");
+      results.innerHTML = "";
+      toast.classList.add("is-hidden");
+      if (message && window.console) console.warn("Moji live demo:", message);
+    }
+
+    function start() {
+      if (worker) return;
+      if (typeof Worker === "undefined" || typeof WebAssembly === "undefined") return fail("no Worker/WebAssembly");
+      toast.classList.remove("is-hidden");
+      t0 = performance.now();
+      try {
+        worker = new Worker("demo/worker.js", { type: "module" });
+      } catch (e) { return fail(e.message); }
+      worker.onerror = function (e) { fail(e.message); };
+      worker.onmessage = function (e) {
+        var d = e.data;
+        if (d.type === "ready") {
+          ready = true;
+          setStatus("ready", "Model ready · loaded in " + ((performance.now() - t0) / 1000).toFixed(1) + " s · running in your browser");
+          toast.classList.add("is-ready");
+          toastText.textContent = "Live demo ready · try it →";
+          setTimeout(function () { toast.classList.add("is-hidden"); }, 4000);
+          run();
+        } else if (d.type === "error") {
+          fail(d.message);
+        } else if (d.type === "result" && d.id === lastId) {
+          render(d.suggestions);
+          meta.textContent = fmtMs(d.ms) + " · computed on this device, nothing sent";
+        }
+      };
+    }
+
+    input.addEventListener("input", run);
+    document.getElementById("liveExamples").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      input.value = b.textContent;
+      run();
+    });
+    document.getElementById("liveTones").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      tone = b.getAttribute("data-tone");
+      this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      run();
+    });
+    results.addEventListener("click", function (e) {
+      var b = e.target.closest(".live-tile[data-emoji]");
+      if (!b) return;
+      input.value = input.value.replace(/\s*$/, " ") + b.getAttribute("data-emoji");
+      input.focus();
+      run();
+    });
+    toast.addEventListener("click", function () { setTimeout(function () { toast.classList.add("is-hidden"); }, 600); });
+
+    showLoading();
+    // Never compete with the page itself: wait for load, then an idle moment.
+    function later() { (window.requestIdleCallback || function (f) { setTimeout(f, 300); })(start, { timeout: 2000 }); }
+    if (document.readyState === "complete") later(); else window.addEventListener("load", later);
+  })();
+</script>
+
 </body>
 </html>
